@@ -1,0 +1,60 @@
+
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icn/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icn/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/icn/favicon-16x16.png">
+    <link rel="manifest" href="/static/icn/site.webmanifest">
+    <link rel="mask-icon" href="/static/icn/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/icn/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="/static/icn/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    {% bootstrap_css %}
+    <title>{% block title %}{% endblock %} - TrueBike</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Barlow:300,300i,400,400b,400i,500,500b,500i,700,700b,700i">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style type="text/css">
+    @media (max-width: 576px) {
+        * {
+            font-size: 3.3vw;
+        }
+    }
+    </style>
+    </head>
+    <body>
+        {% with container_class="container" %}
+        {% block body %}
+        <div class="{{ container_class }} main">
+            {# Display django.contrib.messages as Bootstrap alerts #}
+            {% bootstrap_messages %}
+            {% block content %}{% endblock %}
+            {% block pagination %}
+                {% if is_paginated and page_obj.paginator.num_pages > 1 %}
+                    <div class="row">
+                    <div class="offset-6" style="transform:translate(-50%, 0)">
+                        {% bootstrap_pagination page_obj extra=request.GET.urlencode size='small' pages_to_show=5 %}
+                    </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        </div>
+        {% endblock body %}
+        {% endwith %}
+        {% block extra_body %}{% endblock %}
+        {% block footer %}
+            {% if not chromeless %}
+                {% include "common/footer.html" %}
+            {% endif %}
+        {% endblock %}
+        {% bootstrap_javascript jquery='full' %}
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+        {% block extra_footer %}{% endblock %}
+      </body>
+      </html>

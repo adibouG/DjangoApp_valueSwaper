@@ -1,0 +1,217 @@
+{% extends "common/swaper_base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate 'Bike Hardware Swaper' %}{% endblock %}
+
+{% block content %}
+<div class="container">   
+    <div class="row">
+        <div class="offset-lg-2 col-lg-8">
+            <div class="container">
+                <nav>
+                    <div>
+                        Back to <a href="/swaper">home</a>
+                    </div> 
+                </nav>
+            </div>
+            <div class="container">
+                <h1 class="my-5">
+                    {% translate "View Selected & Available Data" %}
+                </h1>
+            </div>
+            <div class="container">
+                {% if selected %}
+                    <div class="my-5 mx-2">
+                        <p>
+                            <div>{% translate 'Selected Bike' %}</div>
+                        </p>
+                        <div>
+                            <table class="table dark-blue-table d-table">
+                                <thead>
+                                    <tr class="text-action" style="font-size:small">
+                                        <th>{% translate 'BikeId' %}</th>
+                                        <th>{% translate 'HardwareId' %}</th>
+                                        <th>{% translate 'Deleted?' %}</th>
+                                        <th>{% translate 'Edit' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="selectedBikeObj" value={{selected}}>
+                                        <td>{{ selected.tk_bike_id }}</td>
+                                        <td>{{ selected.core_module.hardware_id }}</td>
+                                        <td>{{ selected.core_module.is_deleted }}</td>  
+                                        <td id="editselected">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
+                                                <i class="fa fa-pencil" data-unicode="f040"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    {% if bikes %}
+                    <div class="col-sm-6">
+                        <div class="m-2">
+                            <p>
+                                <div>{% translate 'Other Bike Data' %}</div>
+                            </p>
+                            <div>
+                                <table class="table dark-blue-table d-table">
+                                    <thead>
+                                            <tr class="text-action" style="font-size:small">
+                                                <th>{% translate 'BikeId' %}</th>
+                                                <th>{% translate 'HardwareId' %}</th>
+                                            </tr>
+                                    </thead>
+                                    <tbody>
+                                            {% for bike in bikes %}
+                                                {% if bike.core_module_id != selected.core_module_id %}
+                                                    <tr>
+                                                        <td>{{ bike.tk_bike_id }}</td>
+                                                        <td>{{ bike.core_module_id }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if hardwares %}
+                    <div class="col-sm-6">
+                        <div class="m-2">
+                            <p>
+                                <div>{% translate 'Other Hardware Data' %}</div>
+                            </p>
+                            <div>
+                                <table class="table dark-blue-table d-table">
+                                    <thead>
+                                        <tr class="text-action" style="font-size:small">
+                                            <th>{% translate 'HardwareId' %}</th>
+                                            <th>{% translate 'BikeId' %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for core in hardwares %}
+                                            {% if core.hardware_id != selected.core_module_id %}
+                                                <tr>
+                                                    <td>{{ core.hardware_id }}</td>
+                                                    <td>{{ core.bike.tk_bike_id }}</td>
+                                                </tr>
+                                                <!-- dataList for the update -->
+                                                    <datalist id="hardware_id_list">
+                                                        <option>
+                                                            {{core.hardware_id}}
+                                                        </option>
+                                                   </datalist>
+                                                <!-- dataList for the update -->
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="modal" style="border: 1px solid grey;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="updateform" action="update">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                       {% translate "Update selected Bike:" %}
+                    </h4>
+                    <button type="button" class="close" data-dismiss="#modal">&times;</button>
+                </div>
+                <div class="modal-body" id="result">
+                    <div class="form-group">
+                        <label for="selectedbikeid" class="labeltext">
+                        Selected BikeId: 
+                        </label>
+                        <input readonly value={{selected.tk_bike_id}}  class="form-control" type="text" name="selectedbikeid" id="selectedbikeid" />
+                    </div>
+                    <div class="form-group">
+                       <label for="selectedbikeid_coremoduleid" class="label_text">
+                            HardwareId:
+                        </label>
+                        <input readonly value={{selected.core_module_id}} class="form-control"  name="selectedbikeid_coremoduleid" id="selectedbikeid_coremoduleid" />
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label for="newbikecoremoduleid" class="label_text">
+                            New HardwareId:
+                        </label>
+                        <input  class="form-control"  list="hardware_id_list" name="newbikecoremoduleid" id="newbikecoremoduleid" />
+                    </div>       
+                    <div class="form-group">
+                        <fieldset title="Settings the Database Behaviours for the swap data" >
+                            <div>
+                                <h5>Database actions:</h5>
+                            </div>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    Allow DB Insert   
+                                    <input class="form-check-input"  type="checkbox"  name="dbentry_newcore_add" id="dbentry_newcore_add" />
+                                </label>
+                            </div>
+                            <div class="form-check-inline">    
+                                <label class="form-check-label">
+                                    Set is_deleted flag  
+                                    <input  class="form-check-input"  type="checkbox"  name="dbentry_oldcore_del" id="dbentry_oldcore_del" />
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    Swap removed hardware
+                                    <input  class="form-check-input"  type="checkbox"  name="dbentry_oldcore_upd" id="dbentry_oldcore_upd"  checked />
+                                </label>
+                            </div> 
+                        </fieldset>
+                    </div>       
+            
+                
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger" > 
+                        UPDATE                  
+                        </button>
+                        <button  class="btn btn-secondary" data-dismiss="modal" id="close" > 
+                        CLOSE 
+                        </button>
+                    </div>  
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_footer %}
+<script>
+$(window).on('load', function() {
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+function toggleUpdateForm(e) {
+    e.preventDefault();
+    e.stopPropagtion();
+   
+
+}
+
+document.getElementById('editselected').addEventListener('click', toggleUpdateForm)
+
+</script>
+{% endblock %}

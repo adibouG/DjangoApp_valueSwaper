@@ -1,0 +1,73 @@
+{% extends "common/swaper_base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate 'Component Swap' %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="offset-lg-2 col-lg-8" id="search">
+        <h1 class="my-5">
+            {% translate "CoreModuleId/BikeId values swap" %}
+        </h1>
+
+        <p>
+            <div class="row">
+                <h2  class="my-5"> 
+                    {% translate "Lookup and update data from a:" %}
+                </h2>
+            </div>
+            
+            <div class="container" id="interface_container">
+                <form  class="container" id="searchform"  action="details/">
+
+                    <div class="form-group">
+                        <label for="coremoduleid" class="label_text">
+                            CoreModule Id / Hardware Id:
+                        </label>
+                        <input  class="form-control"  list="hardware_id_list" name="coremoduleid" id="coremoduleid" />
+                    </div>
+                    <div class="form-group">
+                        <label for="bikeid" class="labeltext">
+                            Bike Id: 
+                        </label>
+                        <input  class="form-control" type="text" list="bike_id_list" name="bikeid" id="bikeid" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" > 
+                            SEARCH
+                        </button>
+                    </div>
+      
+                    
+                    <!-- set lists from available to prefill the inputs  -->
+                        <datalist id="bike_id_list">
+                         
+                            {% for x in bikes %}
+                            <option>
+                                {{x.tk_bike_id}}
+                            </option>
+                           {% endfor %}
+
+                        </datalist>
+                        <datalist id="hardware_id_list">
+                            {% for x in coremodules %}
+                                <option>
+                                    {{x.hardware_id}}
+                                </option>
+                            {% endfor %}
+                        </datalist>
+                    <!-- end -->
+                </form>
+            </div>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+<script>
+$(window).on('load', function() {
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+{% endblock %}

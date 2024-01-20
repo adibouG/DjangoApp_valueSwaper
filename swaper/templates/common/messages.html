@@ -1,0 +1,17 @@
+<!--
+  {# css classes from bootstrap 3.x #}
+  {# padding and margin needed to offset height of top navigation bar #}
+-->
+  {% if messages %}
+  <div class="container" style="padding-top:86px;margin-bottom:-100px">
+    {% for message in messages %}
+    <div class="alert alert-dismissable alert-{% if message.tags %}{{ message.tags }}{% else %}secondary{% endif %}" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {# <strong>{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error{% else %}{{ message.tags|title }}{% endif %}</strong> #}
+      {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
