@@ -1,9 +1,15 @@
 # DjangoApp_valueSwaper" 
 
 
+1 - open /swaper
+2 - set the bike to update by typing or selecting a bikeId or its core module id, and click the search button
+3 - a GET request is made to retrieve the details view and the related data and navigate to /swaper/details
+4 - type in/select the new core module id value to use to update the selected Bike and click the update button.
+For information purposes, the other Bike id and hardware id values available in the database  are also displayed as 2 lists just below the update form and contain all the other BikeId with related  HardwareId as in the tk_bike table, and all the other HardwareId with related BikeId as in the tk_core_module table.
+5 - a GET request is made to /swaper/details/update. ( should be changed to a POST request) and  retrieve the update view to process the swap/update
+
 ## "Convention" 
 consistent swaper class method and properties names to help understand and specify the swap settings.
-
 
 ### Example
 A generic swap is made of 2 components. 
