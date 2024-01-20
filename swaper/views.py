@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.http import HttpResponse, Http404
-from .models import CoreModule, Bike, Swaper, BikeIdSwap
+from .models import CoreModule, Bike, Swaper
 from django.template import loader 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
@@ -61,8 +61,7 @@ def details(request):
 
 def update(request):
    
-    swapvalues = BikeIdSwap()
-    
+    # TO DO: replace by a POST request
     bikeidselectd = request.GET.get('selectedbikeid')
     prevcoreid = request.GET.get('selectedbikeid_coremoduleid')
     newcoreid = request.GET.get('newbikecoremoduleid')
@@ -89,11 +88,10 @@ def update(request):
         return redirect('/swaper')
 
     # start swap   
-    swapvalues.to_swap = selectedBike
-    swapvalues.swap_with = swapWith
-
     swaper = Swaper()
-    swaper.swapping = swapvalues
+    swaper.to_swap = selectedBike
+    swaper.swap_with = swapWith
+    # swaper.SWAP = [ Bike.core_module ] # not needed here, set as default class property
     if swaper.can_do_swap() is False:
         messages.error (request, _(swaper.ERROR))
         return redirect('/swaper')

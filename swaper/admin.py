@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from .models import Bike, CoreModule, BikeIdSwap, Swaper
+from .models import Bike, CoreModule
 # Register your models here.
 admin.site.register (Bike)
 admin.site.register (CoreModule)
-admin.site.register (BikeIdSwap)
-admin.site.register (Swaper)
+# admin.site.register (Swaper)

@@ -146,22 +146,46 @@ class Bike(models.Model):
         verbose_name = _('Bike')
 
 ###########################
-# Swaper Added Models     #
+# Swaper Classes          #
 ###########################
+   
+# swaper class manage the swap of a field 
+# it has 4 main properties :
+#   - to_swap: holds an  object to be updated 
+#   - swap_with : hold an objet providing the value to  use for the swap update
+#   - swapState: hold an integer that represent the state of the swap
+#      the state value can be :
+#         swapState == -1  : not done    
+#         swapState == 0 : done / no error
+#         swapState >= 1 : failed / error          
+#   - SWAPPABLE : a list of object property that are allowed to be swapped     
 
-# BikeValueSwap class represent a value to update
-# it has 2 "parts" with 2 fields each: 
-#       - the actual/previous value & type
-#       - the new/updated value & type       
-    
-class BikeIdSwap():
+class Swaper ():
+    # small additional structure for easying swapstate usage and value
+    class SwapState:    
+        TODO=-1                       
+        DONE=0                       
+        FAILED=1                   
+    # ---------------- // SwapState //
 
-    SWAPPABLE = [Bike.core_module]
-    
+    ERROR = False  # True or a message when swap error, False otherwise
+    swap_state = SwapState.TODO # state and return value of the swap process, default -1/todo
+    SWAPPABLE = [Bike.core_module]  # TO DO: add a check that the value being swapped is part of this list   
+    SWAP = [Bike.core_module]
     to_swap = Bike | None
     swap_with = Bike | CoreModule | None  
     
-    def do_swap(self):
+    
+    # While the 'dbentry_newcore_add' and/or 'dbentry_oldcore_del' options
+    # are not activated (see DB behaviour settings form controls of the
+    # html form from templates/list_all.html, the html form submition data 
+    # processed in the views.update() method in views.py) 
+  
+    def do_swap (self):
+        # Check swaper is set correcly
+        if self.can_do_swap() != True:
+            return self.swap_state
+            
         bikePrev_core = self.to_swap.core_module
         new_core = None
         isBike = True
@@ -198,43 +222,14 @@ class BikeIdSwap():
         # save changes in the db
         try:
             self.to_swap.save()
-               
             if isBike == True:
                 self.swap_with.save()
-        
-            return 0
+            return self.swap_state
         
         except:
-            raise _('error on save()')    
-    
-    class Meta:
-        managed = False
-
-# swaper class manage the swap of a field 
-# it has 2 fields :
-#   - toSwap: holds a Value2Swap object
-#   - swapState: hold an (unsigned) integer that represent the state of the swap
-#      the state value can be :
-#         swapState == 0  : not done    
-#         swapState == 1 : done
-#         swapState > 1 : error          
-    
-class Swaper (models.Model):
-
-    class Meta:
-        managed = False
-    
-    # small additional structure for easying swapstate usage and value
-    class SwapState:    
-        TODO=-1                       
-        DONE=0                       
-        FAILED=1                   
-    # ---------------- // SwapState //
-         
-    ERROR = False  # True or a message when swap error, False otherwise
-    swap_state = SwapState.TODO # state and return value of the swap process, default -1/todo
-    swapping = BikeIdSwap # hold the data for the swap
-
+            self.set_error('error on save()')
+            return self.swap_state
+      
     def reset_state (self):
         self.swap_state = self.SwapState.TODO 
         self.ERROR = False
@@ -247,30 +242,13 @@ class Swaper (models.Model):
     def can_do_swap (self):
         # Check swaper is set correcly
         if self.swap_state > self.SwapState.TODO:
-            self.set_error("reset state first for new swap")
+            self.set_error("swap state must be reset")
             return False
-        if self.swapping.to_swap is None or self.swapping.swap_with is None:
+        if self.to_swap is None or self.swap_with:
             self.set_error("Swapping elements are missing (swapWith or toSwap)")
             return False
         # TO DO: add missing/other checks
         return True
-
-
-    # While the 'dbentry_newcore_add' and/or 'dbentry_oldcore_del' options
-    # are not activated (see DB behaviour settings form controls of the
-    # html form from templates/list_all.html, the html form submition data 
-    # processed in the views.update() method in views.py) 
-  
-    def do_swap (self):
-        proceedWithSwap = False 
-        # Check swaper is set correcly
-        if self.can_do_swap():
-            proceedWithSwap = True
-        
-        if proceedWithSwap == True:
-            return self.swapping.do_swap() 
-        
-        return False
 
 """
 About the do_swap() method :
@@ -284,4 +262,3 @@ Data used to do a swap must meet the following conditions:
     must be True for both hardware id 
     Note that is only for swap WITHOUT the previously mentioned options 
 """
-

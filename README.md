@@ -4,11 +4,12 @@
 ## "Convention" 
 consistent swaper class method and properties names to help understand and specify the swap settings.
 
+
 ### Example
 A generic swap is made of 2 components. 
 
     - "TO Swap" :  component value "requesting" an update using the same type of value from another similar component 
-    - "Swap FROM", the component providing the "new" value(s) for the "TO Swap" component.
+    - "Swap WITH", the component providing the "new" value(s) for the "TO Swap" component.
 
 Note about the similarity of value types and components:
 Using same types is not mandatory but provide a way to insure compatibility of the data, maintain consistency through updates resulting in higher success rates.
@@ -27,21 +28,20 @@ After replacenent:
 
 The Swaper will be set like using a BikeIdSwap object like: 
     - To Swap: Bike_001 
-    - Swap From: Bike_008
+    - Swap WITH: Bike_008
+    - SWAP : Bike.core_module
 
     in the code :
-    /* instanciate a BikeIdSwap object */
-    swapValue = ValueSwap()  
-    /* set the 'to_swao' and 'swap_from' properties of        the valueSwap object */
-    swapValue.to_swap = Bike_001
-    swapValue.swap_from = Bike_008
     /* instanciate a Swaper object */
-    swaper = Swaper() 
-    /* set the swapping property using the swapValue object */
-    swaper.swapping = swapValue.do_swap()
+    swaper = Swaper()   
+    /* set the 'to_swao' and 'swap_with' properties of        the Swaper object */
+    swaper.to_swap = Bike_001
+    swaper.swap_with = Bike_008
+    /* set the SWAP property list if needed  */
+    swaper.SWAP = [Bike.core_module] /* actually the default */
+    /* trigger the value swap */
+    swaper.do_swap()
 
 After the swap :
-
-bike1  ### B_A->ha_3 
-bike2  ### B_C->ha_1    - Bike_001 -> CoreMod_hwd001
-    - Bike_008 -> CoreMod_hwd003
+    - Bike_001 -> CoreMod_hwd003
+    - Bike_008 -> CoreMod_hwd001
