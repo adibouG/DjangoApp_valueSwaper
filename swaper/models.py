@@ -244,7 +244,7 @@ class Swaper ():
         if self.swap_state > self.SwapState.TODO:
             self.set_error("swap state must be reset")
             return False
-        if self.to_swap is None or self.swap_with:
+        if self.to_swap is None or self.swap_with is None:
             self.set_error("Swapping elements are missing (swapWith or toSwap)")
             return False
         # TO DO: add missing/other checks
